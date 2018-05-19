@@ -1,9 +1,9 @@
 'use restrict'
 let Logger = require('./../../main/util/logger');
 let mongoose = require('mongoose'),
-  dbURI = 'ds131698.mlab.com:31698/leo-plurer-admin',
-  user = 'leo-plurer-admin',
-  password = '18062012leo'
+  dbURI = 'ds121896.mlab.com:21896/plurer_devil',
+  user = 'plurer-owner',
+  password = 'Abcd1234'
 
 mongoose.connect('mongodb://' + user + ':' + password + '@' + dbURI);
 
