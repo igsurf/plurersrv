@@ -13,7 +13,7 @@ module.exports = function(app) {
 
   app.get('/projeto/', async function(req, res) {
     projetoModel.find(function(error, projetos) {
-        console.log(projetos);
+        
         res.json(projetos);
       })
       // try {
@@ -43,7 +43,7 @@ module.exports = function(app) {
   app.post('/projeto/insert', async function(req, res) {
     try {
       let projeto = req.body;
-      console.log(projeto);
+      
       projeto = await projetoRepository.insert(projeto);
       let response = new ActionResponse().sucesso(201, 'Consulta efetuada com sucesso. ', projeto);
       res.json(response);
@@ -56,7 +56,16 @@ module.exports = function(app) {
 
   app.get('/projeto/query', function(req, res) {
     try {
+
+      var page = parseInt(req.query.page) || 0;
+      var limit = parseInt (req.query.limit) || 6;
+
       const query = ProjetoModel.find();
+      //ORDENACAO 
+      if(req.query.order && req.query.order.length > 0){
+        ordenar(req.query.order, query);
+      }
+      
       //FILTRA PROJETOS POR TIPO (ASSINATURA E/OU PROJETO)
       filter('tipoCampanha.descricao', query, req.query.tipo);
       //FILTRA PROJETOS POR CATEGORIAS 0-N
@@ -69,6 +78,12 @@ module.exports = function(app) {
       if (req.query.titulo && req.query.titulo.length > 0) {
         query.where({ titulo: new RegExp(req.query.titulo, 'i') });
       }
+
+
+      //PAGINACAO
+      query.skip(page * limit);
+      query.limit(limit);
+
       //EXECUTA A QUERY COM TODOS FILTROS VINDOS NO HEADER
       query.exec(function(err, response) {
         if (err) {
@@ -77,11 +92,20 @@ module.exports = function(app) {
         }
         res.json(response);
       });
+
     } catch (err) {
       Logger.errorlog.error(err);
       res.end();
     }
   });
+
+  function ordenar(order, query) {
+    if(order === 'dataAsc') {
+      query.sort({dataCriacao: 'asc'});
+    }else if(order === 'dataDesc') {
+      query.sort({dataCriacao: 'desc'});
+    }
+  }
 
   function filter(field, query, string) {
     let values = [];

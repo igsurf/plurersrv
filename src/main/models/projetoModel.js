@@ -21,7 +21,8 @@ try {
         dataFinal: {type: Date},
         valorArrecadado: {type: Number},
         meta: {type: Number},
-        dataCriacao: {type : Date, default: Date.now },
+        dataCriacao: {type : Date},
+        ativo: {type: Boolean, default: false},
         dadosUsuario: {},
         cabecalho: [{}],
         dadosMarketing: [{}]
